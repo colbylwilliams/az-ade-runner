@@ -5,7 +5,7 @@ set -e
 cdir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 extdir=${cdir%/*}
 
-EXT_NAME = "EXTENSION_NAME"
+EXT_NAME = "ade-runner"
 
 echo "Azure CLI Build Utility"
 echo ""

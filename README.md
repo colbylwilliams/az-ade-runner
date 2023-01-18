@@ -1,25 +1,25 @@
-# az-EXTENSION_NAME
+# az-ade-runner
 
-EXTENSION_DESCRIPTION
+ADE Runner
 
 ## Install
 
-To install the Azure CLI EXTENSION_DESCRIPTION extension, simply run the following command:
+To install the Azure CLI ADE Runner extension, simply run the following command:
 
 ```sh
-az extension add -y -s https://github.com/colbylwilliams/az-EXTENSION_NAME/releases/latest/download/EXTENSION_NAME-0.0.1-py3-none-any.whl
+az extension add -y -s https://github.com/colbylwilliams/az-ade-runner/releases/latest/download/ade_runner-0.0.1-py3-none-any.whl
 ```
 
 ### Update
 
-To update the EXTENSION_NAME extension to the latest version:
+To update the ade-runner extension to the latest version:
 
 ```sh
-az EXTENSION_NAME upgrade
+az ade-runner upgrade
 ```
 
 or for the latest pre-release version:
 
 ```sh
-az EXTENSION_NAME upgrade --pre
+az ade-runner upgrade --pre
 ```

@@ -14,8 +14,8 @@ short-summary: {EXT_DESCRIPTION}.
 """
 
 # -----------------------
-# EXTENSION_NAME version
-# EXTENSION_NAME upgrade
+# ade-runner version
+# ade-runner upgrade
 # -----------------------
 
 helps[f'{EXT_NAME} version'] = f"""

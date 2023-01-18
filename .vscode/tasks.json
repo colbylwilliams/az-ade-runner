@@ -11,9 +11,9 @@
     "tasks": [
         {
             "label": "azdev: linter",
-            "command": "source .venv/bin/activate; azdev linter ${input:extensionName}",
+            "command": "source .venv/bin/activate; azdev linter ade-runner",
             "windows": {
-                "command": ".venv\\Scripts\\Activate.ps1; azdev linter ${input:extensionName}"
+                "command": ".venv\\Scripts\\Activate.ps1; azdev linter ade-runner"
             },
             "icon": {
                 "id": "azure",
@@ -22,9 +22,9 @@
         },
         {
             "label": "azdev: style",
-            "command": "source .venv/bin/activate; azdev style ${input:extensionName}",
+            "command": "source .venv/bin/activate; azdev style ade-runner",
             "windows": {
-                "command": ".venv\\Scripts\\Activate.ps1; azdev style ${input:extensionName}"
+                "command": ".venv\\Scripts\\Activate.ps1; azdev style ade-runner"
             },
             "icon": {
                 "id": "azure",
@@ -34,9 +34,9 @@
         {
             "label": "azdev: setup",
             "detail": "Setup the cli extension development environment",
-            "command": "source .venv/bin/activate; azdev setup -r ${workspaceFolder} -e ${input:extensionName}",
+            "command": "source .venv/bin/activate; azdev setup -r ${workspaceFolder} -e ade-runner",
             "windows": {
-                "command": ".venv\\Scripts\\Activate.ps1; azdev setup -r ${workspaceFolder} -e ${input:extensionName}"
+                "command": ".venv\\Scripts\\Activate.ps1; azdev setup -r ${workspaceFolder} -e ade-runner"
             },
             "dependsOrder": "sequence",
             "dependsOn": [
@@ -84,13 +84,5 @@
                 "color": "terminal.ansiMagenta"
             }
         }
-    ],
-    "inputs": [
-        {
-            "id": "extensionName",
-            "type": "promptString",
-            "description": "Name of the AZ CLI extension.",
-            "default": "EXTENSION_NAME"
-        },
     ]
 }

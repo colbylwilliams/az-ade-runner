@@ -10,7 +10,7 @@ from re import search
 
 from packaging.version import parse as parse_version  # pylint: disable=unresolved-import
 
-EXT_NAME = 'EXTENSION_NAME'
+EXT_NAME = 'ade-runner'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--major', action='store_true', help='bump major version')

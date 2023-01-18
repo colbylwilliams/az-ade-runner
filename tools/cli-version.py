@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from re import search
 
-EXT_NAME = 'EXTENSION_NAME'
+EXT_NAME = 'ade-runner'
 
 path_root = Path(__file__).resolve().parent.parent
 path_src = path_root / EXT_NAME

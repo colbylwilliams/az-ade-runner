@@ -16,7 +16,7 @@ except ImportError:
     from distutils import log as logger
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
 
-EXT_NAME = 'EXTENSION_NAME'
+EXT_NAME = 'ade-runner'
 
 # Must match a HISTORY.rst entry.
 VERSION = '0.0.1'
@@ -48,7 +48,7 @@ with open('HISTORY.rst', 'r', encoding='utf-8') as f:
 setup(
     name=EXT_NAME,
     version=VERSION,
-    description='Microsoft Azure Command-Line Tools EXTENSION_DESCRIPTION Extension',
+    description='Microsoft Azure Command-Line Tools ADE Runner Extension',
     license='MIT',
     author='Microsoft Corporation',
     author_email='colbyw@microsoft.com',

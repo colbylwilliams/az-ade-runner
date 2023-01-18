@@ -6,7 +6,7 @@ on:
     paths:
       # the version number changes in setup.py
       # so only release if that file has changed
-      - 'EXTENSION_NAME/setup.py'
+      - 'ade-runner/setup.py'
 
 jobs:
   build:

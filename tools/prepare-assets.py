@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 from re import search
 
-EXT_NAME = 'EXTENSION_NAME'
-EXT_DESCRIPTION = 'EXTENSION_DESCRIPTION'
+EXT_NAME = 'ade-runner'
+EXT_DESCRIPTION = 'ADE Runner'
 
 ci = os.environ.get('CI', False)
 

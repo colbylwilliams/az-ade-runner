@@ -15,15 +15,15 @@ from ._logging import get_logger
 log = get_logger(__name__)
 
 
-# def EXTENSION_NAME_tests(cmd):
+# def ade_runner_tests(cmd):
 
 
 # -----------------------
-# EXTENSION_NAME version
-# EXTENSION_NAME upgrade
+# ade-runner version
+# ade-runner upgrade
 # -----------------------
 
-def EXTENSION_NAME_version(cmd):
+def ade_runner_version(cmd):
     ext = show_extension(EXT_NAME)
     current_version = 'v' + ext['version']
     is_dev = 'extensionType' in ext and ext['extensionType'] == 'dev'
@@ -41,7 +41,7 @@ def EXTENSION_NAME_version(cmd):
                     f'Please update using: az {EXT_NAME} upgrade')
 
 
-def EXTENSION_NAME_upgrade(cmd, version=None, prerelease=False):
+def ade_runner_upgrade(cmd, version=None, prerelease=False):
     ext = show_extension(EXT_NAME)
     current_version = 'v' + ext['version']
     log.info(f'Current version: {current_version}')

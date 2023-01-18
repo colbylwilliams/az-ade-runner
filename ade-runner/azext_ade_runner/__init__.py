@@ -12,7 +12,7 @@ from ._params import load_arguments
 from .commands import load_command_table
 
 
-class EXTENSION_NAMECommandsLoader(AzCommandsLoader):
+class AdeRunnerCommandsLoader(AzCommandsLoader):
 
     def __init__(self, cli_ctx=None):
         custom_command_type = CliCommandType(operations_tmpl=f'{EXT_DIR_NAME}.custom#{{}}')
@@ -26,4 +26,4 @@ class EXTENSION_NAMECommandsLoader(AzCommandsLoader):
         load_arguments(self, command)
 
 
-COMMAND_LOADER_CLS = EXTENSION_NAMECommandsLoader
+COMMAND_LOADER_CLS = AdeRunnerCommandsLoader
