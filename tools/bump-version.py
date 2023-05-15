@@ -11,6 +11,7 @@ from re import search
 from packaging.version import parse as parse_version  # pylint: disable=unresolved-import
 
 EXT_NAME = 'ade-runner'
+EXT_NAME_CLEAN = EXT_NAME.replace('-', '_')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--major', action='store_true', help='bump major version')
@@ -32,7 +33,7 @@ version = None
 
 path_root = Path(__file__).resolve().parent.parent
 path_src = path_root / EXT_NAME
-path_ext = path_src / 'azext_' + EXT_NAME.replace('-', '_')
+path_ext = path_src / f'azext_{EXT_NAME_CLEAN}'
 
 with open(path_src / 'setup.py', 'r') as f:
     for line in f:
@@ -57,7 +58,7 @@ version_new = parse_version(f'{n_major}.{n_minor}.{n_patch}')
 print(f'bumping version: {version_old.public} -> {version_new.public}')
 
 fmt_setup = 'VERSION = \'{}\''
-fmt_release = f'https://github.com/colbylwilliams/az-{EXT_NAME}/releases/latest/download/{EXT_NAME.replace("-", "_")}-{{}}-py3-none-any.whl'
+fmt_release = f'https://github.com/colbylwilliams/az-{EXT_NAME}/releases/latest/download/{EXT_NAME_CLEAN}-{{}}-py3-none-any.whl'
 fmt_history = '{}\n++++++\n{}\n\n{}'
 
 

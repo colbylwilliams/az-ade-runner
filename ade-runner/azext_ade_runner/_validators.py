@@ -4,18 +4,119 @@
 # ------------------------------------
 # pylint: disable=line-too-long, logging-fstring-interpolation, unused-argument
 
+import os
+
 from pathlib import Path
 from re import match
 from typing import Union
 
 from azure.cli.core.azclierror import (ArgumentUsageError, CLIError, InvalidArgumentValueError,
                                        MutuallyExclusiveArgumentError, RequiredArgumentMissingError, ValidationError)
+from azure.cli.core.commands.validators import validate_file_or_dict
 
 from ._constants import EXT_REPO_NAME, EXT_REPO_OWNER
+from ._data import Manifest
 from ._github import get_github_latest_release_version, github_release_version_exists
 from ._logging import get_logger
+from ._utils import get_yaml_file_contents, get_yaml_file_path
 
 log = get_logger(__name__)
+
+
+def _get_arg_or_env(cmd, ns, arg_name: str, is_path: bool = False) -> Union[str, Path]:
+    '''Get argument value from command line or environment variable.
+    arg_name will be capitalized and prefixed with ADE_ to get the environment variable name.
+    '''
+    log.info(f"Validating argument: '{arg_name}'")
+    env_var_name = f'ADE_{arg_name.upper()}'
+
+    if hasattr(ns, arg_name):
+        if (arg_value := getattr(ns, arg_name, None)):
+            if is_path:
+                arg_value = Path(arg_value).resolve()
+            setattr(ns, arg_name, arg_value)
+            return arg_value
+        if (arg_value := os.environ.get(env_var_name, None)):
+            if is_path:
+                arg_value = Path(arg_value).resolve()
+            setattr(ns, arg_name, arg_value)
+            return arg_value
+        cmd_arg_name = '/'.join(cmd.arguments[arg_name].type.settings['options_list'])
+        raise RequiredArgumentMissingError(f"Missing required argument '{cmd_arg_name}'",
+                                           recommendation=f"Please provide a value for '{cmd_arg_name}' "
+                                           f"or set environment variable: '{env_var_name}'")
+    raise CLIError(f'Invalid argument {arg_name}')
+
+
+def catalog_validator(cmd, ns):
+    catalog = _get_arg_or_env(cmd, ns, 'catalog', is_path=True)
+    if not catalog.is_dir():
+        raise InvalidArgumentValueError(f'Invalid catalog path: {catalog}')
+
+
+def catalog_item_validator(cmd, ns):
+    catalog_item = _get_arg_or_env(cmd, ns, 'catalog_item', is_path=True)
+    if not catalog_item.is_dir():
+        raise InvalidArgumentValueError(f'Invalid catalog item path: {catalog_item}')
+
+    if hasattr(ns, 'manifest'):
+        yaml_path = get_yaml_file_path(catalog_item, 'manifest', required=True)
+        yaml_content = get_yaml_file_contents(yaml_path)
+        ns.manifest = Manifest(yaml_content, yaml_path)
+
+
+def action_name_validator(cmd, ns):
+    _get_arg_or_env(cmd, ns, 'action_name')
+
+
+def action_parameters_validator(cmd, ns):
+    action_params = _get_arg_or_env(cmd, ns, 'action_parameters')
+    ns.action_parameters = validate_file_or_dict(action_params)
+
+
+def environment_resource_group_validator(cmd, ns):
+    _get_arg_or_env(cmd, ns, 'environment_resource_group_name')
+
+
+def ade_runner_run_command_validator(cmd, ns):
+    catalog_validator(cmd, ns)
+    catalog_item_validator(cmd, ns)
+
+    runner: str = ns.manifest.runner
+    template_path: Path = ns.manifest.template_path
+
+    if runner:  # if runner is specified, validate template_path is the correct type for the runner
+        if runner.lower() == 'arm' or runner.lower() == 'bicep':
+            if template_path.suffix != '.json' and template_path.suffix != '.bicep':
+                raise ArgumentUsageError(f'Invalid template file for {runner} runner: {template_path}',
+                                         recommendation='Please provide a valid ARM/Bicep template '
+                                         'file with .json or .bicep extension')
+        elif runner.lower() == 'terraform' or runner.lower() == 'tf':
+            if template_path.suffix != '.tf':
+                raise ArgumentUsageError(f'Invalid template file for {runner} runner: {template_path}',
+                                         recommendation='Please provide a valid Terraform template '
+                                         'file with .tf extension')
+        else:
+            raise ArgumentUsageError(f'Invalid runner: {runner}',
+                                     recommendation='Please provide a valid runner: ARM, Bicep, or Terraform')
+
+    elif template_path:  # if template_path is specified, validate runner is the correct type for the template_path
+        if template_path.suffix == '.tf' or str(template_path).lower().endswith('.tf.json'):
+            runner = 'Terraform'
+        elif template_path.suffix == '.bicep':
+            runner = 'Bicep'
+        elif template_path.suffix == '.json':
+            runner = 'ARM'
+        else:
+            raise ArgumentUsageError(f'Invalid template file: {template_path}',
+                                     recommendation='Please provide a valid ARM/Bicep/Terraform template '
+                                     'file with .json/.bicep/.tf extension')
+
+    # TODO: Add validation for other runners
+
+    action_name_validator(cmd, ns)
+    action_parameters_validator(cmd, ns)
+    environment_resource_group_validator(cmd, ns)
 
 
 def source_version_validator(cmd, ns):

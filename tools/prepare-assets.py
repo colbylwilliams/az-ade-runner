@@ -5,6 +5,7 @@ from pathlib import Path
 from re import search
 
 EXT_NAME = 'ade-runner'
+EXT_NAME_CLEAN = EXT_NAME.replace('-', '_')
 EXT_DESCRIPTION = 'ADE Runner'
 
 ci = os.environ.get('CI', False)
@@ -21,7 +22,7 @@ with open(path_src / 'setup.py', 'r') as f:
             match = search(r'VERSION = [\'\"](.*)[\'\"]$', txt)
             if match:
                 cli_version = match.group(1)
-                cli_name = '{}-{}-py3-none-any.whl'.format(EXT_NAME.replace('-', '_'), cli_version)
+                cli_name = f'{EXT_NAME_CLEAN}-{cli_version}-py3-none-any.whl'
 
 version = f'v{cli_version}'
 download_url = f'https://github.com/colbylwilliams/az-{EXT_NAME}/releases/download/{version}' if ci else path_assets

@@ -8,19 +8,27 @@ from azure.cli.core.profiles import ResourceType
 
 
 def cf_resources(cli_ctx, **_):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_RESOURCE_RESOURCES)
+    from azure.mgmt.resource.resources import ResourceManagementClient
+    client: ResourceManagementClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_RESOURCE_RESOURCES)
+    return client
 
 
 def cf_storage(cli_ctx, **_):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_STORAGE)
+    from azure.mgmt.storage import StorageManagementClient
+    client: StorageManagementClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_STORAGE)
+    return client
 
 
 def cf_network(cli_ctx, **_):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_NETWORK)
+    from azure.mgmt.network import NetworkManagementClient
+    client: NetworkManagementClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_NETWORK)
+    return client
 
 
 def cf_keyvault(cli_ctx, **_):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_KEYVAULT)
+    from azure.mgmt.keyvault import KeyVaultManagementClient
+    client: KeyVaultManagementClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_KEYVAULT)
+    return client
 
 
 def cf_auth(cli_ctx, scope=None):
@@ -34,14 +42,17 @@ def cf_auth(cli_ctx, scope=None):
 
 
 def get_graph_client(cli_ctx):
+    # https://github.com/Azure/azure-cli/blob/dev/doc/microsoft_graph_client.md
     from azure.cli.command_modules.role import graph_client_factory
     return graph_client_factory(cli_ctx)
 
 
 def cf_compute(cli_ctx, **kwargs):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_COMPUTE,
-                                   subscription_id=kwargs.get('subscription_id'),
-                                   aux_subscriptions=kwargs.get('aux_subscriptions'))
+    from azure.mgmt.compute import ComputeManagementClient
+    client: ComputeManagementClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_COMPUTE,
+                                                              subscription_id=kwargs.get('subscription_id'),
+                                                              aux_subscriptions=kwargs.get('aux_subscriptions'))
+    return client
 
 
 def cf_galleries(cli_ctx, _):
@@ -65,7 +76,9 @@ def cf_gallery_application_version(cli_ctx, *_):
 
 
 def cf_msi(cli_ctx, **_):
-    return get_mgmt_service_client(cli_ctx, ResourceType.MGMT_MSI)
+    from azure.mgmt.msi import ManagedServiceIdentityClient
+    client: ManagedServiceIdentityClient = get_mgmt_service_client(cli_ctx, ResourceType.MGMT_MSI)
+    return client
 
 
 def cf_user_identities(cli_ctx, _):

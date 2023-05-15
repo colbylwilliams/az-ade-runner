@@ -6,6 +6,7 @@
 
 import json
 
+from pathlib import Path
 from time import sleep
 
 from azure.cli.core.commands import LongRunningOperation
@@ -34,8 +35,12 @@ def is_bicep_file(file_path):
 
 def deploy_arm_template_at_resource_group(cmd, resource_group_name=None, template_file=None,
                                           template_uri=None, parameters=None, no_wait=False):
+    '''Deploy an ARM template to a resource group.'''
 
     from azure.cli.command_modules.resource.custom import JsonCTemplatePolicy, _prepare_deployment_properties_unmodified
+
+    if template_file and isinstance(template_file, Path):
+        template_file = str(template_file)
 
     properties = _prepare_deployment_properties_unmodified(cmd, 'resourceGroup', template_file=template_file,
                                                            template_uri=template_uri, parameters=parameters,
@@ -83,6 +88,7 @@ def deploy_arm_template_at_resource_group(cmd, resource_group_name=None, templat
 
 
 def get_arm_output(outputs, key, raise_on_error=True):
+    '''Get an ARM deployment output value.'''
     if not outputs:
         return None
     try:
@@ -90,13 +96,14 @@ def get_arm_output(outputs, key, raise_on_error=True):
     except KeyError as e:
         if raise_on_error:
             raise CLIError(
-                f"A value for '{key}' was not provided in the ARM template outputs") from e
+                f"A value for '{key}' was not provided in the ARM deployment outputs") from e
         value = None
 
     return value
 
 
 def create_subnet(cmd, vnet, subnet_name, address_prefix):
+    '''Create a subnet in a virtual network.'''
     Subnet = cmd.get_models('Subnet', resource_type=ResourceType.MGMT_NETWORK)
 
     vnet_parts = parse_resource_id(vnet)
@@ -120,7 +127,8 @@ def create_subnet(cmd, vnet, subnet_name, address_prefix):
     return result
 
 
-def tag_resource_group(cmd, resource_group_name, tags):
+def tag_resource_group(cmd, resource_group_name: str, tags):
+    '''Tags a resource group.'''
     Tags, TagsPatchResource = cmd.get_models(
         'Tags', 'TagsPatchResource', resource_type=ResourceType.MGMT_RESOURCE_RESOURCES)
 
@@ -136,6 +144,7 @@ def tag_resource_group(cmd, resource_group_name, tags):
 
 
 def get_resource_group_tags(cmd, resource_group_name):
+    '''Gets the tags of a resource group.'''
     sub = get_subscription_id(cmd.cli_ctx)
     scope = resource_id(subscription=sub, resource_group=resource_group_name)
     client = cf_resources(cmd.cli_ctx).tags

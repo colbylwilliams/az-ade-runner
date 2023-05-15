@@ -17,6 +17,7 @@ except ImportError:
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
 
 EXT_NAME = 'ade-runner'
+EXT_NAME_CLEAN = EXT_NAME.replace('-', '_')
 
 # Must match a HISTORY.rst entry.
 VERSION = '0.0.1'
@@ -57,5 +58,5 @@ setup(
     classifiers=CLASSIFIERS,
     packages=find_packages(),
     install_requires=DEPENDENCIES,
-    package_data={f'azext_{EXT_NAME.replace("-", "_")}': ['azext_metadata.json']},
+    package_data={f'azext_{EXT_NAME_CLEAN}': ['azext_metadata.json']},
 )

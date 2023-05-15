@@ -4,11 +4,18 @@
 # ------------------------------------
 # pylint: disable=line-too-long, logging-fstring-interpolation, too-many-locals, too-many-statements, unused-argument
 
+import json
+import os
+
+from pathlib import Path
+
 from azure.cli.core.azclierror import CLIError
 from azure.cli.core.extension.operations import show_extension, update_extension
 from packaging.version import parse as parse_version
 
-from ._constants import EXT_NAME
+from ._arm import deploy_arm_template_at_resource_group
+from ._constants import EXT_NAME, IN_RUNNER
+from ._data import Manifest
 from ._github import get_github_latest_release_version, get_github_release
 from ._logging import get_logger
 
@@ -18,10 +25,27 @@ log = get_logger(__name__)
 # def ade_runner_tests(cmd):
 
 
+def ade_runner_run(cmd, environment_resource_group_name: str = None, runner: str = None,
+                   catalog: Path = None, catalog_item: Path = None, manifest: Manifest = None,
+                   action_name: str = None, action_parameters: dict = None):
+
+    params = []
+
+    for key, value in action_parameters.items():
+        params.append(f'{key}={value if isinstance(value, str) else json.dumps(value)}')
+
+    if action_name.lower() == 'deploy':
+        log.info('Deploying environment...')
+        _, _ = deploy_arm_template_at_resource_group(cmd, environment_resource_group_name,
+                                                     template_file=manifest.template_path,
+                                                     parameters=[params])
+
+
 # -----------------------
 # ade-runner version
 # ade-runner upgrade
 # -----------------------
+
 
 def ade_runner_version(cmd):
     ext = show_extension(EXT_NAME)

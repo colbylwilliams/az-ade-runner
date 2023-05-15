@@ -10,6 +10,7 @@ from typing import Union
 import yaml
 
 from azure.cli.core.azclierror import FileOperationError, ValidationError
+from azure.cli.core.util import get_file_yaml, read_file_content
 
 from ._logging import get_logger
 
@@ -50,16 +51,7 @@ def get_yaml_file_contents(path: Union[str, Path]):
     path = (path if isinstance(path, Path) else Path(path)).resolve()
     if not path.is_file():
         raise FileOperationError(f'Could not find yaml file at {path}')
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            obj = yaml.safe_load(f)
-    except OSError:  # FileNotFoundError introduced in Python 3
-        raise FileOperationError(f'No such file or directory: {path}')  # pylint: disable=raise-missing-from
-    except yaml.YAMLError as e:
-        raise FileOperationError('Error while parsing yaml file:\n\n' + str(e))  # pylint: disable=raise-missing-from
-    if obj is None:
-        raise FileOperationError(f'Yaml file cannot be empty: {path}')
-    return obj
+    return get_file_yaml(path, throw_on_empty=True)
 
 
 def _validate_file_path(path: Union[str, Path], name: str = None) -> Path:
